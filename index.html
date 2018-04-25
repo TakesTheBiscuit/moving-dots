@@ -1,154 +1,246 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Title of the document</title>
+	<meta charset="UTF-8">
+	<title>moving-dots</title>
+
+
+	<style>
+		
+		body {
+			position: relative;
+			background: #15156d;
+			
+		}
+		.container {
+			padding: 200px;
+		}
+
+		.label {
+			
+			z-index: 999;
+			font-family:sans-serif;
+			font-size:10px;
+			color:#fafafa;
+		}
+		.circle {
+		    height: 25px;
+		    width: 25px;
+		    background-color: #393992;
+		    border-radius: 50%;
+		    display: inline-block;
+		    position: absolute;
+		    left: 300px;
+		    top: 300px;
+		    transition: all 1.5s ease-in-out;
+		    transform-origin:left;
+		}
+		.circleSmall {
+		    height: 15px;
+		    width: 15px;
+		    background-color: #393992;
+		    border-radius: 50%;
+		    display: inline-block;
+		    position: absolute;
+		    left: 300px;
+		    top: 300px;
+		    transition: all 1s ease-in-out;
+		    transform-origin: right;
+		}
+		
+	</style>
 
 </head>
 
 <body>
-	<div class="container">
-		<span class="circle item1"></span>
-		<span class="circlesmall item2"></span>
-		<span class="circle item3"></span>
-		<span class="circlesmall item4"></span>
-		<span class="circle item5"></span>
-		<span class="circlesmall item1"></span>
-		<span class="circle item2"></span>
-		<span class="circlesmall item3"></span>
-		<span class="circle item4"></span>
-		<span class="circlesmall item5"></span>
-		<span class="circle item1"></span>
-		<span class="circlesmall item2"></span>
-		<span class="circle item3"></span>
-		<span class="circlesmall item4"></span>
-		<span class="circle item5"></span>
-		<span class="circlesmall item1"></span>
-		<span class="circle item2"></span>
-		<span class="circlesmall item3"></span>
-		<span class="circle item4"></span>
-		<span class="circlesmall item5"></span>
-		<span class="circle item1"></span>
-		<span class="circlesmall item2"></span>
-		<span class="circle item3"></span>
-		<span class="circlesmall item4"></span>
-		<span class="circle item5"></span>
-		<span class="circlesmall item1"></span>
-		<span class="circle item2"></span>
-		<span class="circlesmall item3"></span>
-		<span class="circle item4"></span>
-		<span class="circlesmall item5"></span>
-		<span class="circle item1"></span>
-		<span class="circlesmall item2"></span>
-		<span class="circle item3"></span>
-		<span class="circlesmall item4"></span>
-		<span class="circle item5"></span>
-		<span class="circlesmall item1"></span>
-		<span class="circle item2"></span>
-		<span class="circlesmall item3"></span>
-		<span class="circle item4"></span>
-		<span class="circlesmall item5"></span>
-		<span class="circle item1"></span>
-		<span class="circlesmall item2"></span>
-		<span class="circle item3"></span>
-		<span class="circlesmall item4"></span>
-		<span class="circle item5"></span>
-		<span class="circlesmall item1"></span>
-		<span class="circle item2"></span>
-		<span class="circlesmall item3"></span>
-		<span class="circle item4"></span>
-		<span class="circlesmall item5"></span>
-		<span class="circle item1"></span>
-		<span class="circlesmall item2"></span>
-		<span class="circle item3"></span>
-		<span class="circlesmall item4"></span>
-		<span class="circle item5"></span>
-		<span class="circlesmall item1"></span>
-		<span class="circle item2"></span>
-		<span class="circlesmall item3"></span>
-		<span class="circle item4"></span>
-		<span class="circlesmall item5"></span>
+	<div>
+		<div class="label">Large: <span id="largeCirclesCount"></span></div>
+		<div class="label">Small: <span id="smallCirclesCount"></span></div>
 	</div>
 
+	<div class="container" id="theStage">
+
+		<span class="circle"></span>
+		<span class="circleSmall"></span>
+		
+	</div>
+
+	<script>
+		
+		/*
+			takes an nodelist then randomly positions them in the window
+			@param  object/nodelist  elements
+		*/
+		function loopobjects(elements) {
+			elements.forEach(function(element) {
+				const height = window.innerHeight - 100;
+				const width = window.innerWidth - 100;
+				const x = Math.ceil((Math.random() * height) + 1);
+				const y = Math.ceil((Math.random() * width) + 1);
+				element.style.left = y+'px';
+				element.style.top = x+'px';
+			});
+			
+		}
+
+		/*
+			a callback function for later setInterval() 
+		*/
+		function randomstandard() {
+			const circles = document.querySelectorAll('.circle');
+			loopobjects(circles);
+		}
+
+		/*
+			a callback function for later setInterval() 
+		*/
+		function randomsmaller() {
+			const smallcircles = document.querySelectorAll('.circleSmall');
+			loopobjects(smallcircles);
+		}
+
+
+
+		/*
+			creates the circles enmass
+			@param integer circleCount
+			@param integer smallFrequency
+			@param domIdentifier(ID) elStageDom
+
+			returns string (html)
+		*/
+		function setTheStage(circleCount, smallFrequency, elStageDom) {
+
+			// get the stage 
+			var normalCircle = getTheStage(elStageDom, 'circle');
+			var smallCircle = getTheStage(elStageDom, 'circleSmall');
+			
+			// because 0 based.
+			circleCount -= 1;
+
+			var iterator = 0;
+			var outputHtml = "";
+			while (iterator <= circleCount) {
+
+				// if modulus is 0 then we produce a small
+				if (iterator % smallFrequency < 1) {
+				    outputHtml += smallCircle;
+				}
+
+				// we'll create one small for every normal at this point
+				outputHtml += normalCircle;
+				iterator++;
+			}
+
+			return outputHtml;
+		}
+
+		/*
+			gets the stage innerHTML and fires it back
+			@param domIdentifier(ID) elStageDom
+			@param class targetElementClassName
+			returns string
+		*/
+		function getTheStage(elStageDom, targetElementClassName) {
+
+			// @todo check if elStageDom actually exists
+			
+			var theStage = document.getElementById(elStageDom);
+
+			// now find targetElement inside theStage
+			var el = theStage.getElementsByClassName(targetElementClassName)[0];
+	
+			// needs to be the whole span
+			return el.outerHTML;
+		}
+
+		/*
+			Init the app
+			@param integer circleCount
+			@param integer smallFrequency
+			@param domIdentifier(ID) elStageDom
+
+			returns BOOL
+		*/
+		function pushToStage(circleCount, smallFrequency, elStageDom) {
+
+			var stageContentToPush = setTheStage(circleCount, smallFrequency, elStageDom);
+
+
+			if (stageContentToPush) {
+				// clear the stage, peeps. @todo could be a useful function later on?
+				document.getElementById(elStageDom).innerHTML = '';
+
+				// curtain up
+				document.getElementById(elStageDom).innerHTML = stageContentToPush;
+
+				// action!
+				/*
+					set the intervals
+						- @todo could be a function with global vars to allow for 'stop' button or functionality
+				*/
+				setInterval(randomstandard, 1200);
+				setInterval(randomsmaller, 1000);
+			}
+
+
+
+
+		}
+
+
+		function debugStats() {
+			// @todo extrapolate these 4 lines to own function (DRY) using class as lookup
+			const circles = document.querySelectorAll('.circle');
+			document.getElementById('largeCirclesCount').innerHTML = circles.length;
+
+			const circlesSmall = document.querySelectorAll('.circleSmall');
+			document.getElementById('smallCirclesCount').innerHTML = circlesSmall.length;
+
+			
+		}
+
+
+		/* 
+			set the stage, set the table & pour the wine
+			aka INIT (entry point)
+	
+
+			example usage: (A)
+				pushToStage(14, 1, 'theStage')
+			where:
+				14 = big circles
+				1 = frequency of smaller circles against big circles
+				'theStage' = ID of stage DOM element
+			outputs:
+				14 large
+				14 small
+
+
+			example usage: (B)
+				pushToStage(14, 14, 'theStage')
+			where:
+				14 = big circles
+				14 = frequency of smaller circles against big circles
+				'theStage' = ID of stage DOM element
+			outputs:
+				14 large
+				1 small
+			
+
+			Finally,
+			a frequency of 2 would result in 50% of all large having a small buddy created
+
+			Why?
+			so you can create a sort of particle style setup
+		*/
+
+		pushToStage(14, 2, 'theStage');
+
+		debugStats();
+
+		
+	</script>
+
 </body>
-
-<style>
-	
-	body {
-		position: relative;
-		background: #15156d;
-		
-	}
-	.container {
-		padding: 200px;
-	}
-	.circle {
-	    height: 25px;
-	    width: 25px;
-	    background-color: #393992;
-	    border-radius: 50%;
-	    display: inline-block;
-	    position: absolute;
-	    left: 300px;
-	    top: 300px;
-	    transition: all 1.5s ease-in-out;
-	    transform-origin:left;
-	}
-	.circlesmall {
-	    height: 15px;
-	    width: 15px;
-	    background-color: #393992;
-	    border-radius: 50%;
-	    display: inline-block;
-	    position: absolute;
-	    left: 300px;
-	    top: 300px;
-	    transition: all 1s ease-in-out;
-	    transform-origin: right;
-	}
-	
-</style>
-
-<script>
-	
-	/*
-		takes an nodelist then randomly positions them in the window
-		@param  object/nodelist  elements
-	*/
-	function loopobjects(elements) {
-		elements.forEach(function(element) {
-			const height = window.innerHeight - 100;
-			const width = window.innerWidth - 100;
-			const x = Math.ceil((Math.random() * height) + 1);
-			const y = Math.ceil((Math.random() * width) + 1);
-			element.style.left = y+'px';
-			element.style.top = x+'px';
-		});
-		
-	}
-
-	/*
-		a callback function for later setInterval() 
-	*/
-	function randomstandard() {
-		const circles = document.querySelectorAll('.circle');
-		loopobjects(circles);
-	}
-
-	/*
-		a callback function for later setInterval() 
-	*/
-	function randomsmaller() {
-		const smallcircles = document.querySelectorAll('.circlesmall');
-		loopobjects(smallcircles);
-	}
-
-	/*
-		fire the interval 
-	*/
-	setInterval(randomstandard, 1200);
-	setInterval(randomsmaller, 1000);
-	
-</script>
-
 </html>
